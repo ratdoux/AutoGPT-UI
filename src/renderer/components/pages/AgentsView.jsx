@@ -27,7 +27,7 @@ const AgentsView = () => {
   return (
     <Page>
       <div>
-        <BubbleForceDirectedTree data={data} width={1200} height={1600} />
+        <BubbleForceDirectedTree data={data} width={600} height={800} />
       </div>
       <AgentsUI />
     </Page>
