@@ -12,23 +12,43 @@ const AgentsView = () => {
   const data = {
     name: "root",
     children: [
-      {name: "child #1"},
+      { name: "child #1" },
       {
         name: "child #2",
         children: [
-          {name: "grandchild #1"},
-          {name: "grandchild #2"},
-          {name: "grandchild #3"}
+          { name: "grandchild #1" },
+          { name: "grandchild #2" },
+          { name: "grandchild #3" }
         ]
       }
     ]
   };
 
   return (
-    <div>
-              <BubbleForceDirectedTree data={data} width={600} height={600} />
+    <Page>
+      <div>
+        <BubbleForceDirectedTree data={data} width={1200} height={1600} />
+      </div>
+      <AgentsUI />
+    </Page>
+  );
+};
 
-    {/* <Page>
+export default AgentsView;
+
+const AgentsUI = () => {
+  const [drawerState, setDrawerState] = useState(false);
+
+  const toggleDrawer = () => {
+    setDrawerState(!drawerState);
+  };
+
+
+  return (
+    <Page
+      style={{maxHeight: '0', minHeight: '0', overflow: 'hidden'}}
+
+    >
       <Grid.Container
         alignItems="center"
         justify="flex-end"
@@ -40,11 +60,9 @@ const AgentsView = () => {
         }}
       >
         <Grid>
-          <Button auto icon={<ArrowLeft/>} scale={1 / 2} onClick={toggleDrawer} />
+          <Button auto icon={<ArrowLeft />} scale={1 / 2} onClick={toggleDrawer} />
         </Grid>
       </Grid.Container>
-      <div>
-      </div>
       <Drawer visible={drawerState} onClose={toggleDrawer} placement="right">
         <Drawer.Title>Drawer</Drawer.Title>
         <Drawer.Subtitle>This is a drawer</Drawer.Subtitle>
@@ -52,10 +70,6 @@ const AgentsView = () => {
           <p>Some content contained within the drawer.</p>
         </Drawer.Content>
       </Drawer>
-    </Page> */}
-    </div>
-
+    </Page>
   );
 };
-
-export default AgentsView;
