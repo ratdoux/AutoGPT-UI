@@ -29,6 +29,8 @@ const BubbleForceDirectedTree = ({ data, width, height }) => {
       .on('end', dragended);
   };
 
+  const forceThreshold = 0.3;
+
 
 
   useEffect(() => {
@@ -38,28 +40,30 @@ const BubbleForceDirectedTree = ({ data, width, height }) => {
         const links = root.links();
         const nodes = root.descendants();
 
-
-
         const simulation = d3.forceSimulation(nodes)
           .force("link", d3.forceLink(links).id(d => d.id).distance(30).strength(1))
-          .force("charge", d3.forceManyBody().strength((d) => d.expanded ? -200 : -50))
+          .force("charge", d3.forceManyBody().strength((d) => (d.expanded ? -200 : -50)))
           .force("x", d3.forceX())
           .force("y", d3.forceY());
 
         const svg = d3.select(ref.current)
           .attr("viewBox", [-width / 2, -height / 2, width, height]);
 
-        const graph = svg.append('g');
-
+        const graph = svg.append("g");
         const zoomed = (event) => {
           const { transform } = event;
           graph.attr('transform', transform);
+      
+          if (transform.k < forceThreshold) {
+            simulation.force("link").strength(0);
+            simulation.force("charge").strength(0);
+          } else {
+            simulation.force("link").strength(1);
+            simulation.force("charge").strength((d) => (d.expanded ? -200 : -50));
+          }
+      
+          simulation.alphaTarget(0.3).restart();
         };
-
-        const zoom = d3.zoom().on('zoom', zoomed);
-        svg.call(zoom);
-
-
         const link = graph.append("g")
           .attr("stroke", "#999")
           .attr("stroke-opacity", 0.6)
@@ -68,16 +72,19 @@ const BubbleForceDirectedTree = ({ data, width, height }) => {
           .join("line");
 
         const node = graph.append("g")
+          .attr("stroke", "#000")
+          .attr("stroke-width", 1.5)
           .selectAll("g")
           .data(nodes)
           .join("g")
-          .attr("cursor", "pointer");
+          .attr("cursor", "pointer")
+          .call(drag(simulation));
+
 
         node
           .append('circle')
           .attr('fill', (d) => (d.children ? null : '#000'))
-          .attr('stroke', "#000") // Move the stroke attribute to the circle element
-          .attr('stroke-width', 1.5) // Move the stroke-width attribute to the circle element
+          .attr('stroke', (d) => (d.children ? null : '#fff'))
           .attr('r', 3.5)
           .on('click', (event, d) => {
             d.expanded = !d.expanded;
@@ -92,37 +99,22 @@ const BubbleForceDirectedTree = ({ data, width, height }) => {
               .transition()
               .duration(250)
               .attr('r', d.expanded ? 30 : 3.5);
-            simulation.force("charge", d3.forceManyBody().strength((d) => d.expanded ? -200 : -50)).alphaTarget(0.3).restart();
+            simulation.force("charge",
+            d3.forceManyBody().strength((d) => d.expanded ? -200 : -50)).alphaTarget(0.3).restart();
 
             d3.select(event.currentTarget.parentNode).select('text')
               .attr('display', d.expanded ? 'block' : 'none');
           });
 
-
-        // Add text as children of the <g> elements
         node
           .append("text")
           .text(d => d.data.name)
-          .attr("font-size", "7px")
+          .attr("font-size", "9px")
           .attr("stroke", "#fff")
           .attr("text-anchor", "middle")
           .attr("dy", ".35em")
-          .attr('pointer-events', 'none')
-          .attr('fill', d => d.expanded ? '#fff' : 'none') // Set the text color to white when the node is expanded
+          .attr('fill', d => d.expanded ? '#fff' : 'none')
           .attr('display', 'none');
-
-        // Double-click event listener to expand/collapse the nodes
-        node.on('dblclick', (event, d) => {
-          d.expanded = !d.expanded;
-          d3.select(event.currentTarget)
-            .select('text')
-            .transition()
-            .duration(250)
-            .attr('opacity', d.expanded ? 1 : 0);
-        });
-
-        node.append("title")
-          .text(d => d.data.name);
 
         simulation.on("tick", () => {
           link
@@ -136,8 +128,14 @@ const BubbleForceDirectedTree = ({ data, width, height }) => {
             .attr("cy", d => d.y)
             .attr('transform', (d) => `translate(${d.x}, ${d.y})`);
         });
+
+        svg.call(
+          d3.zoom()
+            .scaleExtent([0.1, 4])
+            .on("zoom", zoomed)
+        );
         return svg.node();
-      }
+      };
 
       chart();
     }
