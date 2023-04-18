@@ -10,26 +10,25 @@ const AgentsView = () => {
   };
 
   const data = {
-    "name": "root",
-    "children": [
+    name: "root",
+    children: [
+      {name: "child #1"},
       {
-        "name": "child1",
-        "children": [
-          {
-            "name": "grandchild1",
-            "children": []
-          }
+        name: "child #2",
+        children: [
+          {name: "grandchild #1"},
+          {name: "grandchild #2"},
+          {name: "grandchild #3"}
         ]
-      },
-      {
-        "name": "child2",
-        "children": []
       }
     ]
   };
 
   return (
-    <Page>
+    <div>
+              <BubbleForceDirectedTree data={data} width={600} height={600} />
+
+    {/* <Page>
       <Grid.Container
         alignItems="center"
         justify="flex-end"
@@ -44,8 +43,7 @@ const AgentsView = () => {
           <Button auto icon={<ArrowLeft/>} scale={1 / 2} onClick={toggleDrawer} />
         </Grid>
       </Grid.Container>
-      <div style={{zIndex:1000}}>
-        <BubbleForceDirectedTree data={data} width={600} height={600} />
+      <div>
       </div>
       <Drawer visible={drawerState} onClose={toggleDrawer} placement="right">
         <Drawer.Title>Drawer</Drawer.Title>
@@ -54,7 +52,9 @@ const AgentsView = () => {
           <p>Some content contained within the drawer.</p>
         </Drawer.Content>
       </Drawer>
-    </Page>
+    </Page> */}
+    </div>
+
   );
 };
 
