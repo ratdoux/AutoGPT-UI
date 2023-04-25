@@ -6,12 +6,23 @@ const port = process.env.EVENT_DISPATCHER_PORT || 45000;
 
 app.use(bodyParser.json());
 
-app.post('/events', (req, res) => {
-  console.log('Received event:', req.body);
-  // Handle the event data in your React Electron app
-  res.sendStatus(200);
-});
-
 app.listen(port, () => {
   console.log(`Server listening on port ${port}`);
 });
+
+module.exports.startServer = (mainWindow) => {
+  // Your Express server setup code ...
+
+  app.post('/events', (req, res) => {
+    console.log('Received event:', req.body);
+
+    // Send an IPC message to the renderer process with the event data
+    if (mainWindow) {
+      mainWindow.webContents.send('eventReceived', req.body);
+    }
+
+    res.sendStatus(200);
+  });
+
+  // ...
+};

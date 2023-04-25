@@ -16,7 +16,7 @@ import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
 
 
-require("../server/server");
+const { startServer } = require("../server/server");
 
 class AppUpdater {
   constructor() {
@@ -83,7 +83,7 @@ const createWindow = async () => {
         : path.join(__dirname, '../../.erb/dll/preload.js'),
     },
   });
-
+  
   mainWindow.loadURL(resolveHtmlPath('index.html'));
 
   mainWindow.on('ready-to-show', () => {
@@ -100,6 +100,8 @@ const createWindow = async () => {
   mainWindow.on('closed', () => {
     mainWindow = null;
   });
+
+  startServer(mainWindow);
 
   const menuBuilder = new MenuBuilder(mainWindow);
   menuBuilder.buildMenu();

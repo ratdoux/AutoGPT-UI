@@ -3,6 +3,22 @@ import * as d3 from 'd3';
 
 const BubbleForceDirectedTree = ({ data, width, height }) => {
   const ref = useRef();
+  const prevDataRef = useRef();
+
+  const zoomed = (event, graph, simulation) => {
+    const { transform } = event;
+    graph.attr('transform', transform);
+
+    if (transform.k < forceThreshold) {
+      simulation.force("link").strength(0);
+      simulation.force("charge").strength(0);
+    } else {
+      simulation.force("link").strength(1);
+      simulation.force("charge").strength((d) => (d.expanded ? -200 : -50));
+    }
+
+    simulation.alphaTarget(0.3).restart();
+  };
 
   const drag = (simulation) => {
     function dragstarted(event, d) {
@@ -32,10 +48,10 @@ const BubbleForceDirectedTree = ({ data, width, height }) => {
   const forceThreshold = 0.3;
 
 
-
   useEffect(() => {
-    if (data) {
-      const chart = () => {
+    if (data && JSON.stringify(data) !== JSON.stringify(prevDataRef.current)) {
+      prevDataRef.current = data;
+      const chart = () => { 
         const root = d3.hierarchy(data);
         const links = root.links();
         const nodes = root.descendants();
@@ -50,20 +66,7 @@ const BubbleForceDirectedTree = ({ data, width, height }) => {
           .attr("viewBox", [-width / 2, -height / 2, width, height]);
 
         const graph = svg.append("g");
-        const zoomed = (event) => {
-          const { transform } = event;
-          graph.attr('transform', transform);
-      
-          if (transform.k < forceThreshold) {
-            simulation.force("link").strength(0);
-            simulation.force("charge").strength(0);
-          } else {
-            simulation.force("link").strength(1);
-            simulation.force("charge").strength((d) => (d.expanded ? -200 : -50));
-          }
-      
-          simulation.alphaTarget(0.3).restart();
-        };
+
         const link = graph.append("g")
           .attr("stroke", "#999")
           .attr("stroke-opacity", 0.6)
@@ -100,7 +103,7 @@ const BubbleForceDirectedTree = ({ data, width, height }) => {
               .duration(250)
               .attr('r', d.expanded ? 30 : 3.5);
             simulation.force("charge",
-            d3.forceManyBody().strength((d) => d.expanded ? -200 : -50)).alphaTarget(0.3).restart();
+              d3.forceManyBody().strength((d) => d.expanded ? -200 : -50)).alphaTarget(0.3).restart();
 
             d3.select(event.currentTarget.parentNode).select('text')
               .attr('display', d.expanded ? 'block' : 'none');
@@ -132,7 +135,7 @@ const BubbleForceDirectedTree = ({ data, width, height }) => {
         svg.call(
           d3.zoom()
             .scaleExtent([0.1, 4])
-            .on("zoom", zoomed)
+            .on("zoom", (e) => zoomed(e, graph, simulation))
         );
         return svg.node();
       };
