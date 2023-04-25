@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Button, Drawer, Page, Grid } from '@geist-ui/core';
 import { ArrowLeft, Menu } from '@geist-ui/icons';
 import BubbleForceDirectedTree from '../d3/BubbleForceDirectedTree';
+import WebsocketConnection from '../communication/WebsocketConnection';
 const AgentsView = () => {
   const [drawerState, setDrawerState] = useState(false);
 
@@ -67,7 +68,7 @@ const AgentsUI = () => {
         <Drawer.Title>Drawer</Drawer.Title>
         <Drawer.Subtitle>This is a drawer</Drawer.Subtitle>
         <Drawer.Content>
-          <p>Some content contained within the drawer.</p>
+          <WebsocketConnection />
         </Drawer.Content>
       </Drawer>
     </Page>
