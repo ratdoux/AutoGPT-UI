@@ -15,6 +15,9 @@ import log from 'electron-log';
 import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
 
+
+require("../server/server");
+
 class AppUpdater {
   constructor() {
     log.transports.file.level = 'info';
