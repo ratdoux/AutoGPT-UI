@@ -6,6 +6,7 @@ import Homepage from './components/pages/Homepage';
 import AgentsView from './components/pages/AgentsView';
 import Settings from './components/pages/Settings';
 import WebFont from 'webfontloader';
+import ChatView from './components/pages/ChatView';
 
 import './App.css';
 
@@ -47,6 +48,7 @@ export default function App() {
       <Router>
         <Routes>
           <Route path="/" element={<Homepage />} />
+          <Route path="/chat" element={<ChatView />} />
           <Route path="/agents" element={<AgentsView />} />
           <Route path="/settings" element={<Settings changeFont={changeFont} />} />
         </Routes>

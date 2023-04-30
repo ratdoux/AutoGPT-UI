@@ -1,0 +1,23 @@
+.send-button{
+    background-color: grey;;
+    border-radius: 0;
+    border: 2px solid grey;
+    border-top: 2px double white !important;
+    border-left: 2px double white !important;
+    border-right: 2px double black !important;
+    border-bottom: 2px double black !important;
+    padding: 0;
+    color: #fff;
+    font-size: 1rem;
+    transition: background-color 0s ease-in-out;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    &:hover{
+        background-color: #2e2e2e;
+        cursor: pointer;
+    }
+    &:focus{
+        outline: none;
+    }
+}

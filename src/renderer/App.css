@@ -11,7 +11,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: #2c2a1e !important;
+  background-color: #33415c !important;
 
 }
 
@@ -59,4 +59,24 @@ a:hover {
   justify-content: center;
   align-items: center;
   margin: 20px 0;
+}
+
+/* width */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #33415c;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #b1e2df 0%, #6f95ff 200%);
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #6f95ff 0%, #b1e2df 100%);
 }
