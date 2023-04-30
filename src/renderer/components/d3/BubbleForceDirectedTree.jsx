@@ -148,7 +148,7 @@ const BubbleForceDirectedTree = ({ data, width, height }) => {
     <svg
       ref={ref}
       style={{ minWidth: '600px', backgroundColor: 'white', border: '1px solid black' }}
-    ></svg>
+    />
   );
 };
 

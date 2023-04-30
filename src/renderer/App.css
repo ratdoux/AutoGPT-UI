@@ -7,11 +7,16 @@ body {
   color: white;
   height: 100vh;
   background: black;
-  font-family: sans-serif;
   overflow-y: hidden;
   display: flex;
   justify-content: center;
   align-items: center;
+  background-color: #2c2a1e !important;
+
+}
+
+.chat-input{
+  border: none !important;
 }
 
 button {

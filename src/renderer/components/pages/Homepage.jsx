@@ -30,7 +30,8 @@ const Homepage = () => {
               </Button>
             </Grid>
             <Grid>
-              <Button auto iconRight={<Icons.Settings />} type="secondary" size="large" style={buttonStyle}>
+              <Button  onClick={() => navigate('/settings')} 
+                    auto iconRight={<Icons.Settings />} type="secondary" size="large" style={buttonStyle}>
                 Settings
               </Button>
             </Grid>

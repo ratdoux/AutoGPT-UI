@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Drawer, Page, Grid, Text } from '@geist-ui/core';
-import { ArrowLeft, ArrowRight, Menu } from '@geist-ui/icons';
+import { Button, Drawer, Page, Grid, Text, Card, Spacer } from '@geist-ui/core';
+import { ArrowLeft, ArrowRight } from '@geist-ui/icons';
 import BubbleForceDirectedTree from '../d3/BubbleForceDirectedTree';
-import {  useWebSocket } from '../communication/WebsocketHandler';
+import { useWebSocket } from '../communication/WebsocketHandler';
 import { useWebSocketContext } from 'renderer/context/WebSocketProvider';
-import { checkStringAgainstInfoStringArray, hasAnsi, removeAnsi } from '../utils/ParsingFunctions';
+import { checkStringAgainstInfoStringArray, hasAnsi, removeAnsiAndGetColor } from '../utils/ParsingFunctions';
 import ChatInput from '../chat/ChatInput';
 const AgentsView = () => {
   const [drawerState, setDrawerState] = useState(false);
@@ -22,21 +22,22 @@ const AgentsView = () => {
 
   const handleSendMessage = (message) => {
     sendMessage(message);
+    setEssentialMessages((prevMessages) => [...prevMessages,
+    { isUser: true, message: message }
+    ]);
   };
 
   const ansiMessage = messageData[messageData.length - 1];
 
   useEffect(() => {
     if (hasAnsi(ansiMessage)) {
-      const message = removeAnsi(ansiMessage);
+      const message = { isUser: false, ...removeAnsiAndGetColor(ansiMessage) };
       setEssentialMessages((prevMessages) => [...prevMessages, message]);
     } else if (checkStringAgainstInfoStringArray(ansiMessage)) {
       setInfoMessages((prevMessages) => [...prevMessages, ansiMessage]);
     }
 
   }, [messageData]);
-
-  console.log(essentialMessages)
 
   const data = {
     name: "root",
@@ -55,19 +56,20 @@ const AgentsView = () => {
   return (
     <Page>
       <div>
-        <BubbleForceDirectedTree data={data} width={800} height={800} />
+        <BubbleForceDirectedTree data={data} width={600} height={600} />
       </div>
-      <AgentsUI essentialMessages={essentialMessages} handleSendMessage={handleSendMessage}/>
-      <button onClick={toggleConnection}>
-        {connect ? 'Disconnect' : 'Connect'}
-      </button>
-      <button onClick={() => handleSendMessage("y")}>Send y</button>
-      <button onClick={() => handleSendMessage("n")}>Send n</button>
-      <button onClick={() => handleSendMessage("y -N")}>BRRRR</button>
-      <input type="text" id="input" />
-      <button onClick={() => handleSendMessage(document.getElementById("input").value)}>Send input</button>
-      <div style={{ width:"50%", overflowY: 'auto', maxHeight: 'calc(100vh - 200px)' }}>
-        <p>{infoMessages[infoMessages.length - 1]}</p>
+      <AgentsUI
+        essentialMessages={essentialMessages}
+        handleSendMessage={handleSendMessage}
+        toggleConnection={toggleConnection}
+        connect={connect}
+      />
+      <div style={{ width: "100%", overflowY: 'auto', maxHeight: 'calc(100vh - 200px)' }}>
+        {infoMessages[infoMessages.length - 1] &&
+          <Card type={'cyan'} width="100%">
+            {infoMessages[infoMessages.length - 1]}
+          </Card>
+        }
       </div>
     </Page>
   );
@@ -75,7 +77,7 @@ const AgentsView = () => {
 
 export default AgentsView;
 
-const AgentsUI = ({essentialMessages, handleSendMessage}) => {
+const AgentsUI = ({ essentialMessages, handleSendMessage, toggleConnection, connect }) => {
   const [drawerState, setDrawerState] = useState(false);
 
   const toggleDrawer = () => {
@@ -83,15 +85,48 @@ const AgentsUI = ({essentialMessages, handleSendMessage}) => {
   };
 
 
-  const ChatBubble = ({ message }) => (
-    <div style={{ padding: '8px', borderRadius: '12px', background: '#f3f3f3', marginBottom: '8px', maxWidth: '100%', wordWrap: 'break-word' }}>
-      <Text>{message}</Text>
+  const GPTBubble = ({ message, color }) => (
+    <div>
+      <div style={{
+        padding: '8px',
+        paddingRight: '15px',
+        paddingLeft: '15px',
+        background: color,
+        maxWidth: '100%',
+        wordWrap: 'break-word'
+      }}>
+        <Text>{message}</Text>
+      </div>
+      <Spacer h={0.2} />
+    </div>
+  );
+
+  const USERBubble = ({ message }) => (
+    <div>
+      <div style={{
+        padding: '8px',
+        paddingRight: '15px',
+        paddingLeft: '15px',
+        background: '#00d969',
+        borderBottom: '5px double #b51a48',
+        borderTop: '5px double #b51a48',
+        maxWidth: '100%',
+        wordWrap: 'break-word'
+      }}>
+        <Text>{message}</Text>
+      </div>
+      <Spacer h={0.2} />
     </div>
   );
 
   return (
     <Page
-      style={{ maxHeight: '0', minHeight: '0', overflow: 'hidden' }}
+      style={{
+        maxHeight: '0',
+        minHeight: '0',
+        overflow: 'hidden',
+        backgroundColor: 'black',
+      }}
 
     >
       <Grid.Container
@@ -102,26 +137,50 @@ const AgentsUI = ({essentialMessages, handleSendMessage}) => {
           top: '1rem',
           right: '1rem',
           marginBottom: '1rem',
+          paddingTop: '5px !important'
         }}
       >
-        <Grid >
-          <Button auto icon={<ArrowLeft />} scale={1 / 2} onClick={toggleDrawer} />
-        </Grid>
+        <Grid.Container
+          direction='column'
+          alignItems="flex-end"
+          justify="flex-end"
+          gap={2}
+        >
+          <Grid style={{ marginRight: '10px' }}>
+            <Button auto icon={<ArrowLeft />} scale={1 / 2} onClick={toggleDrawer} />
+          </Grid>
+          <Grid marginBottom='5px'>
+            <Button auto onClick={toggleConnection}>
+              {connect ? 'Disconnect' : 'Connect'}
+            </Button>
+          </Grid>
+        </Grid.Container>
       </Grid.Container>
-      <Drawer visible={drawerState} onClose={toggleDrawer} placement="right">
-        <Drawer.Title>Chat</Drawer.Title>
+      <Drawer style={{
+        backgroundColor: "#2c2a1e",
+        paddingTop: '5px',
+        overflowY: 'auto',
+        overflowX: 'hidden',
+        borderRadius: '0',
+      }} visible={drawerState} onClose={toggleDrawer} placement="right">
         <Grid >
           <Button auto icon={<ArrowRight />} scale={1 / 2} onClick={toggleDrawer} />
         </Grid>
-        <Drawer.Content>
-          <div style={{ overflowY: 'auto', maxHeight: 'calc(100vh - 200px)' }}>
+        <Drawer.Content style={{
+          paddingRight: 0,
+          paddingLeft: 0,
+          paddingTop: '10px',
+        }}>
+          <div>
             {essentialMessages.map((message, index) => (
-              <ChatBubble key={index} message={message} />
+              message.isUser ?
+                <USERBubble key={index} message={message.message} />
+                :
+                <GPTBubble key={index} color={message.color} message={message.message} />
             ))}
           </div>
           <ChatInput onSubmit={(message) => handleSendMessage(message)} />
         </Drawer.Content>
-        
       </Drawer>
     </Page>
   );
