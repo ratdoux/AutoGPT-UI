@@ -16,7 +16,8 @@ import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
 
 
-const { startServer } = require("../server/server");
+import { startServer } from "../server/server";
+import { saveSettings, loadSettings } from "./fileHandler";
 
 class AppUpdater {
   constructor() {
@@ -27,6 +28,16 @@ class AppUpdater {
 }
 
 let mainWindow: BrowserWindow | null = null;
+
+ipcMain.on('save-settings', (event, settings) => {
+  saveSettings(settings);
+});
+
+ipcMain.on('load-settings', (event) => {
+  loadSettings((loadedSettings:Array<string>) => {
+    event.reply('load-settings-reply', ...loadedSettings);
+  });
+});
 
 ipcMain.on('ipc-example', async (event, arg) => {
   const msgTemplate = (pingPong: string) => `IPC test: ${pingPong}`;

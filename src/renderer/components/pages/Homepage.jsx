@@ -18,15 +18,17 @@ const Homepage = () => {
         <Grid>
           <Text
             style={{ color: "#b1e2e0" }} h2>
-            AutoGPT-GraphUI
+            AutoGPT-UI
           </Text>
           <Text
             style={{ color: "#ffd43c" }}
-            h4>An AI Agent Visualization App based on AutoGPT</Text>
+            h4>A UI wrapper for AutoGPT</Text>
           <Spacer />
           <Grid.Container direction="column" gap={1}>
             <Grid>
-              <Button onClick={() => navigate('/chat')}
+              <Button
+                className='homepage-button'
+                onClick={() => navigate('/chat')}
                 auto iconRight={<Icons.Activity />} size="large"
                 style={{ ...buttonStyle, backgroundColor: 'orange', color: '#fff' }}
               >
@@ -35,33 +37,43 @@ const Homepage = () => {
             </Grid>
             <Grid>
               <Button onClick={() => navigate('/agents')}
+                className='homepage-button'
+                disabled
                 auto iconRight={<Icons.Play />} size="large"
                 style={{ ...buttonStyle, backgroundColor: '#00d969', color: '#fff' }}
               >
-                Graph
+                Graph (WIP)
               </Button>
             </Grid>
             <Grid>
-              <Button auto iconRight={<Icons.Database />} disabled type="error" size="large"
+              <Button
+                className='homepage-button'
+                auto iconRight={<Icons.Database />} disabled type="error" size="large"
                 style={{ ...buttonStyle, backgroundColor: '#6f95ff' }}
               >
-                Memory
+                Memory (WIP)
               </Button>
             </Grid>
             <Grid>
-              <Button onClick={() => navigate('/settings')}
+              <Button
+                className='homepage-button'
+                onClick={() => navigate('/settings')}
                 auto iconRight={<Icons.Settings />} type="secondary" size="large"
                 style={{ ...buttonStyle, backgroundColor: "#e34f37" }}>
                 Settings
               </Button>
             </Grid>
             <Grid>
-              <Button auto iconRight={<Icons.Info />} type="secondary" size="large" style={buttonStyle}>
+              <Button
+                className='homepage-button'
+                auto iconRight={<Icons.Info />} type="secondary" size="large" style={buttonStyle}>
                 About
               </Button>
             </Grid>
             <Grid>
-              <Button auto iconRight={<Icons.Github />} type="secondary" size="large" style={buttonStyle}>
+              <Button
+                className='homepage-button'
+                auto iconRight={<Icons.Github />} type="secondary" size="large" style={buttonStyle}>
                 Github
               </Button>
             </Grid>

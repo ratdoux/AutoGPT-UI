@@ -13,7 +13,6 @@ import {
   removeFirstColon
 } from '../utils/ParsingFunctions';
 import Chat from '../chat/Chat';
-import ChatInput from '../chat/ChatInput';
 const AgentsView = () => {
   const [drawerState, setDrawerState] = useState(false);
   const [nodeState, setNodeState] = useState([]);

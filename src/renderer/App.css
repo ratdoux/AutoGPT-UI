@@ -18,6 +18,44 @@ body {
 .chat-input{
   border: none !important;
 }
+.settings-input > div{
+  border-radius: 0px !important;
+  margin-bottom: 10px;
+  background-color: #cc5a30;
+}
+
+.string-input{
+  background-color: #b1e2df;
+  color: white;
+  border-radius: 0px !important;
+  margin-bottom: 10px !important;
+  border-top: 2px solid white !important;
+  border-left: 2px solid white !important;
+  border-right: 2px solid black !important;
+  border-bottom: 2px solid black !important;
+}
+.home-button{
+  background-color: #b1e2df;
+  color: white;
+  border-radius: 0px !important;
+  margin-bottom: 10px !important;
+  border-top: 2px solid white !important;
+  border-left: 2px solid white !important;
+  border-right: 2px solid black !important;
+  border-bottom: 2px solid black !important;
+  min-width: 20px !important;
+}
+
+.homepage-button{
+  background-color: #b1e2df;
+  color: white;
+  border-radius: 0px !important;
+  border-top: 2px solid white !important;
+  border-left: 2px solid white !important;
+  border-right: 2px solid black !important;
+  border-bottom: 2px solid black !important;
+  min-width: 20px !important;
+}
 
 button {
   background-color: white;

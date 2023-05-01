@@ -1,56 +1,5 @@
-const infoStringList = [
-  "Missing",
-  "spacy",
-  "Installing",
-  "Looking",
-  "Downloading",
-  "Collecting",
-  "--------------",
-  "Requirement",
-  "Thinking...",
-];
 
-const atomicActions = [
-  "THOUGHTS",
-  "REASONING",
-  "PLAN",
-  "CRITICISM",
-  "NEXT ACTION",
-  "Using memory",
-  "Using Browser",
-];
 
-const returnList = [
-  "?",
-  "!",
-  ". ",
-  "...",
-];
-
-const returnListNextLine = [
-  "Role",
-  "Goals",
-  "##",
-  "Continue (y/n)",
-  "- Thinking...",
-  "ARGUMENTS ",
-  "'y -N'",
-  "'n'",
-];
-
-//should be put in its own file but for now here is fine
-const colorTable = {
-  0: "#b1e2e0",
-  30: "black",
-  31: "red",
-  32: "#b1e2e0", //usual text
-  33: "#ffd43c", //thoghts, reason, plan
-  34: "white",
-  35: "#e34f37", //enter y
-  36: "#8ba9ff", //next action
-  94: "#ff663c", //next action
-  90: "grey",
-};
 
 function hasAnsi(str) {
   const ansiRegex = new RegExp(
@@ -79,7 +28,7 @@ function hasAnsiInternal(str) {
 }
 
 
-function parseAnsiColor(ansiCode) {
+function parseAnsiColor(ansiCode, colorTable) {
   const ansiRegex = /\u001b\[(\d+(?:;\d+)*)?([a-zA-Z])/;
   const match = ansiCode.match(ansiRegex);
   let parsedColor = "white";
@@ -92,7 +41,7 @@ function parseAnsiColor(ansiCode) {
 }
 
 
-function splitAtomicActionString(string) {
+function splitAtomicActionString(string, atomicActions) {
   const matchingAtomicAction = atomicActions.find(action => string.includes(action));
 
   if (matchingAtomicAction) {
@@ -105,7 +54,7 @@ function splitAtomicActionString(string) {
   return obj;
 }
 
-function removeAnsiAndGetColor(str) {
+function removeAnsiAndGetColor(str, colorTable) {
   const ansiRegex = new RegExp(
     [
       '[\\u001B\\u009B][[\\]()#;?]*(?:(?:(?:[a-zA-Z\\d]*(?:;[a-zA-Z\\d]*)*)?\\u0007)',
@@ -121,13 +70,13 @@ function removeAnsiAndGetColor(str) {
   if (ansiCodes.length === 0) return { color: "#b1e2e0", message: str };
   const message =
   {
-    color: parseAnsiColor(ansiCodes),
+    color: parseAnsiColor(ansiCodes, colorTable),
     message: str.replace(ansiRegex, '')
   };
   return message;
 }
 
-function checkStringAgainstInfoStringArray(string) {
+function checkStringAgainstInfoStringArray(string, infoStringList) {
   if (string)
     for (let i = 0; i < infoStringList.length; i++) {
       if (string.includes(infoStringList[i])) {
@@ -137,31 +86,6 @@ function checkStringAgainstInfoStringArray(string) {
   return false;
 }
 
-
-
-// function addReturn(string) {
-//   if (string) {
-//     const regex = createReturnListRegex();
-//     const splitArray = string.split(regex);
-//     const returnListJoined = returnList.map(item => item.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join("|");
-
-//     let result = [];
-//     for (let i = 0; i < splitArray.length; i++) {
-//       if (returnList.includes(splitArray[i])) {
-//         if (i > 0 && result.length > 0) {
-//           result[result.length - 1] += (splitArray[i]);
-//         }
-//       } else {
-//         const splitResult = splitAtomicActionString(splitArray[i]);
-//         result.push(JSON.stringify(splitResult));
-//       }
-//     }
-//     return result;
-//   }
-//   return [];
-// }
-
-//function remove ":" from string
 function removeFirstColon(string) {
   if (string) {
     const colonIndex = string.indexOf(":");
@@ -173,21 +97,21 @@ function removeFirstColon(string) {
   return string;
 }
 
-function createReturnListRegex() {
+function createReturnListRegex(returnList) {
   const escapedReturnList = returnList.map(char => char.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&'));
   return new RegExp('(' + escapedReturnList.join('|') + ')', 'g');
 }
 
-function createReturnListNextLineRegex() {
+function createReturnListNextLineRegex(returnListNextLine) {
   const escapedReturnList = returnListNextLine.map(char => char.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&'));
   return new RegExp('(' + escapedReturnList.join('|') + ')', 'g');
 }
 
 
-function addReturn(string) {
+function addReturn(string, returnList, returnListNextLine) {
   if (string) {
-    const regex = createReturnListRegex();
-    const nextLineRegex = createReturnListNextLineRegex();
+    const regex = createReturnListRegex(returnList);
+    const nextLineRegex = createReturnListNextLineRegex(returnListNextLine);
 
     const splitArray = string.split(regex).filter(str => str.length > 0);
 
@@ -209,10 +133,10 @@ function addReturn(string) {
     });
 
     split.forEach((str, index) => {
-      if(returnListNextLine.includes(str)){
-        if(split[index + 1])
+      if (returnListNextLine.includes(str)) {
+        if (split[index + 1])
           split[index] = str + split[index + 1];
-        else 
+        else
           split[index] = str;
 
         split.splice(index + 1, 1);
@@ -234,4 +158,11 @@ function addReturn(string) {
 
 
 
-export { checkStringAgainstInfoStringArray, hasAnsi, removeAnsiAndGetColor, addReturn, splitAtomicActionString, removeFirstColon }
+export {
+  checkStringAgainstInfoStringArray,
+  hasAnsi,
+  removeAnsiAndGetColor,
+  addReturn,
+  splitAtomicActionString,
+  removeFirstColon,
+}

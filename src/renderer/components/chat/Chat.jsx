@@ -6,25 +6,25 @@ import {
   splitAtomicActionString,
   removeFirstColon
 } from '../utils/ParsingFunctions';
-
+import {
+  infoStringList, atomicActions, returnList, returnListNextLine, colorTable
+} from '../utils/ParsingSettings'
 import ChatInput from './ChatInput';
 
-const Chat = ({ essentialMessages, handleSendMessage, toggleConnection, connect }) => {
-  const [drawerState, setDrawerState] = useState(false);
+const Chat = ({ essentialMessages, handleSendMessage, toggleConnection, connect, settings }) => {
 
-  const toggleDrawer = () => {
-    setDrawerState(!drawerState);
-  };
+  const addReturnLeftRight = (message) => {
+    return addReturn(message, settings.returnList ?? returnList, settings.returnListNextLine ?? returnListNextLine);
+  }
 
-  //remove nulls from array functon
-  const removeNulls = (array) => {
-    return array.filter((value) => value != null);
-  };
+  const splitAtomic = (message) => {
+    return splitAtomicActionString(message, settings.atomicActions ?? atomicActions);
+  }
 
   const GPTBubble = ({ message, color }) => {
 
     const BubbleHighlights = ({ data }) => {
-      const line = splitAtomicActionString(data);
+      const line = splitAtomic(data);
       if (!line.atomic) {
         return (
           <Text
@@ -90,7 +90,7 @@ const Chat = ({ essentialMessages, handleSendMessage, toggleConnection, connect 
           borderRight: '2px solid black',
           borderBottom: '2px solid black',
         }}>
-          {addReturn(message).map((data, index) => (
+          {addReturnLeftRight(message).map((data, index) => (
             // line[0] is the atomic action, line[1] is the rest, if no atomic action, line[0] is empty
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <BubbleHighlights key={index} data={data} />
@@ -152,7 +152,21 @@ const Chat = ({ essentialMessages, handleSendMessage, toggleConnection, connect 
           gap={2}
         >
           <Grid marginBottom='5px'>
-            <Button auto onClick={toggleConnection}>
+            <Button 
+              style={{
+                marginBottom: '10px',
+                marginTop : '5px',
+                maxWidth: '20px !important',
+                height: '36px',
+                backgroundColor: '#ff713c',
+                color: '#fff',
+                borderRadius: '0',
+                borderTop: '2px solid white',
+                borderLeft: '2px solid white',
+                borderRight: '2px solid black',
+                borderBottom: '2px solid black',
+            }}
+            auto onClick={toggleConnection}>
               {connect ? 'Disconnect' : 'Connect'}
             </Button>
           </Grid>

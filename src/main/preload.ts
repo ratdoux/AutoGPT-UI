@@ -3,13 +3,15 @@
 import { contextBridge, ipcRenderer, IpcRendererEvent } from 'electron';
 
 export type Channels = 'ipc-example';
+export type Save = 'save-settings';
+export type Load = 'load-settings';
 
 const electronHandler = {
   ipcRenderer: {
-    sendMessage(channel: Channels, args: unknown[]) {
+    sendMessage(channel: Channels | Save | Load, args: unknown[]) {
       ipcRenderer.send(channel, args);
     },
-    on(channel: Channels, func: (...args: unknown[]) => void) {
+    on(channel: Channels | Save | Load, func: (...args: unknown[]) => void) {
       const subscription = (_event: IpcRendererEvent, ...args: unknown[]) =>
         func(...args);
       ipcRenderer.on(channel, subscription);
@@ -18,8 +20,17 @@ const electronHandler = {
         ipcRenderer.removeListener(channel, subscription);
       };
     },
-    once(channel: Channels, func: (...args: unknown[]) => void) {
+    once(channel: Channels | Save | Load, func: (...args: unknown[]) => void) {
       ipcRenderer.once(channel, (_event, ...args) => func(...args));
+    },
+    invoke: (channel: string, args: unknown[]): Promise<unknown[]> => {
+      return new Promise((resolve) => {
+        ipcRenderer.once(`${channel}-reply`, (_event, ...args) => {
+          resolve(args);
+        });
+
+        ipcRenderer.send(channel, args);
+      });
     },
   },
 };
