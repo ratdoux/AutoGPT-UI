@@ -106,7 +106,7 @@ const ChatView = () => {
           top: '92%',
           left: '50%',
           transform: 'translate(-50%,-50%)',
-          display: (!ansiMessage.includes('Thinking')) ? 'none' : 'block',
+          display: (ansiMessage && !ansiMessage.includes('Thinking')) ? 'none' : 'block',
         }}
       size='large' />
       <Spinner
