@@ -1,5 +1,9 @@
 # AutoGPT-UI
 
+![Homepage](https://raw.githubusercontent.com/ratdoux/AutoGPT-UI/main/assets/homepage.png)
+
+![Chat](https://raw.githubusercontent.com/ratdoux/AutoGPT-UI/main/assets/chat.png)
+
 AutoGPT-UI is an Electron app that acts as a wrapper around the original Auto-GPT repository, which was created by Significant-Gravitas. 
 
 It is currently built with electron-react-boilerplate and is only available for Windows. However, support for Linux and macOS is in the works.
